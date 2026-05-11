@@ -1,0 +1,35 @@
+{
+  "name": "utl-template-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@9.12.3",
+  "scripts": {
+    "dev": "vite --config src/config/vite.config.ts",
+    "build": "tsc --noEmit && vite build --config src/config/vite.config.ts",
+    "preview": "vite preview --config src/config/vite.config.ts",
+    "biome": "biome check --config-path biome.json .",
+    "test": "vitest run --config src/config/vite.config.ts --coverage",
+    "e2e": "playwright test --config src/config/playwright.config.ts"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "vite": "^5.4.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@playwright/test": "^1.48.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitest/coverage-v8": "^2.1.4",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

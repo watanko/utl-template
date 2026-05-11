@@ -1,0 +1,31 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.13.5
+    hooks:
+      - id: ruff-format
+        files: ^backend/
+      - id: ruff
+        args: [--fix]
+        files: ^backend/
+  - repo: local
+    hooks:
+      - id: backend-check
+        name: backend-check
+        entry: make check backend
+        language: system
+        pass_filenames: false
+      - id: backend-test
+        name: backend-test
+        entry: make test backend
+        language: system
+        pass_filenames: false
+      - id: frontend-check
+        name: frontend-check
+        entry: make check frontend
+        language: system
+        pass_filenames: false
+      - id: frontend-test
+        name: frontend-test
+        entry: make test frontend
+        language: system
+        pass_filenames: false
