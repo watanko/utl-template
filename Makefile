@@ -1,7 +1,7 @@
 SHELL := /bin/zsh
 AREA := $(word 2,$(MAKECMDGOALS))
 
-.PHONY: dev backend frontend check test compl install deploy
+.PHONY: dev backend frontend check test compl install deploy infra docs up down logs ps
 
 dev:
 	$(MAKE) -j 2 backend frontend
@@ -56,6 +56,25 @@ ifeq ($(AREA),backend)
 else
 	$(MAKE) compl backend
 endif
+
+infra:
+ifeq ($(AREA),up)
+	docker compose -f infra/local/compose.yaml up --build
+else ifeq ($(AREA),down)
+	docker compose -f infra/local/compose.yaml down --remove-orphans
+else ifeq ($(AREA),logs)
+	docker compose -f infra/local/compose.yaml logs -f
+else ifeq ($(AREA),ps)
+	docker compose -f infra/local/compose.yaml ps
+else
+	@echo "usage: make infra [up|down|logs|ps]"
+endif
+
+up down logs ps:
+	@:
+
+docs:
+	@find docs -maxdepth 2 -type f | sort
 
 deploy:
 	@echo "deploy target は未設定です。環境ごとのコマンドはレビュー後に追加してください。"

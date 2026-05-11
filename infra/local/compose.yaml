@@ -1,0 +1,47 @@
+name: utl-template
+
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/backend.Dockerfile
+    environment:
+      APP_NAME: utl-template
+      APP_ENV: local
+      DATABASE_URL: postgresql+psycopg://utl:utl@database:5432/utl
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/frontend.Dockerfile
+    environment:
+      VITE_API_BASE_URL: http://127.0.0.1:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: utl
+      POSTGRES_USER: utl
+      POSTGRES_PASSWORD: utl
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U utl -d utl"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
