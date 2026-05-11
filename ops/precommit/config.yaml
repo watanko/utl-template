@@ -1,6 +1,10 @@
 repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.13.5
+    rev: v0.15.12
     hooks:
       - id: ruff-format
         files: ^backend/
@@ -22,6 +26,16 @@ repos:
       - id: frontend-check
         name: frontend-check
         entry: make check frontend
+        language: system
+        pass_filenames: false
+      - id: docs-check
+        name: docs-check
+        entry: make check docs
+        language: system
+        pass_filenames: false
+      - id: tooling-check
+        name: tooling-check
+        entry: make check tooling
         language: system
         pass_filenames: false
       - id: frontend-test

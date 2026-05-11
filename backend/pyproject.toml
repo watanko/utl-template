@@ -52,3 +52,8 @@ select = ["E", "F", "I", "B", "UP", "PLR", "RUF", "C90"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["PLR2004"]
+
+[tool.uv]
+dev-dependencies = [
+    "pip-audit>=2.10.0",
+]

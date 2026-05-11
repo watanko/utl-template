@@ -9,14 +9,16 @@
     "build": "tsc --noEmit && vite build --config src/config/vite.config.ts",
     "preview": "vite preview --config src/config/vite.config.ts",
     "biome": "biome check --config-path biome.json .",
+    "knip": "knip --config src/config/knip.json",
+    "markdownlint": "markdownlint-cli2 --config ../.markdownlint-cli2.yaml \"../AGENTS.md\" \"../docs/**/*.md\" \"../infra/**/*.md\" \"../ops/**/*.md\"",
     "test": "vitest run --config src/config/vite.config.ts --coverage",
     "e2e": "playwright test --config src/config/playwright.config.ts"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.3",
-    "vite": "^5.4.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "vite": "^5.4.10",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -24,11 +26,12 @@
     "@playwright/test": "^1.48.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
-    "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitest/coverage-v8": "^2.1.4",
     "jsdom": "^25.0.1",
+    "knip": "^6.12.2",
+    "markdownlint-cli2": "^0.22.1",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"
   }

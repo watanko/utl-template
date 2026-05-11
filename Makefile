@@ -1,7 +1,7 @@
 SHELL := /bin/zsh
 AREA := $(word 2,$(MAKECMDGOALS))
 
-.PHONY: dev backend frontend check test compl install deploy infra docs up down logs ps
+.PHONY: dev backend frontend check test compl install deploy infra docs security tooling vulnerabilities up down logs ps
 
 dev:
 	$(MAKE) -j 2 backend frontend
@@ -34,9 +34,20 @@ ifeq ($(AREA),backend)
 else ifeq ($(AREA),frontend)
 	cd frontend && corepack pnpm exec biome check --config-path biome.json .
 	cd frontend && corepack pnpm tsc --noEmit
+else ifeq ($(AREA),docs)
+	cd frontend && corepack pnpm exec markdownlint-cli2 --config ../.markdownlint-cli2.yaml "../AGENTS.md" "../docs/**/*.md" "../infra/**/*.md" "../ops/**/*.md"
+else ifeq ($(AREA),tooling)
+	cd frontend && corepack pnpm exec knip --config src/config/knip.json
+else ifeq ($(AREA),security)
+	gitleaks detect --source . --redact --verbose
+else ifeq ($(AREA),vulnerabilities)
+	cd backend && uv run pip-audit
+	cd frontend && corepack pnpm audit --audit-level high
 else
 	$(MAKE) check backend
 	$(MAKE) check frontend
+	$(MAKE) check docs
+	$(MAKE) check tooling
 endif
 
 test:
@@ -75,6 +86,9 @@ up down logs ps:
 
 docs:
 	@find docs -maxdepth 2 -type f | sort
+
+security tooling vulnerabilities:
+	@:
 
 deploy:
 	@echo "deploy target は未設定です。環境ごとのコマンドはレビュー後に追加してください。"
