@@ -30,7 +30,6 @@
   - `make test frontend`
   - `make check backend`
   - `make check frontend`
-  - `make compl backend`
   - `make deploy`
 
 ## 4. バックエンド

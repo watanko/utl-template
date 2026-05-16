@@ -3,8 +3,8 @@ name: utl-template
 services:
   backend:
     build:
-      context: ../..
-      dockerfile: infra/docker/backend.Dockerfile
+      context: ..
+      dockerfile: docker/backend.Dockerfile
     environment:
       APP_NAME: utl-template
       APP_ENV: local
@@ -18,8 +18,8 @@ services:
 
   frontend:
     build:
-      context: ../..
-      dockerfile: infra/docker/frontend.Dockerfile
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
     environment:
       VITE_API_BASE_URL: http://127.0.0.1:8000
     ports:

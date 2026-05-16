@@ -16,6 +16,5 @@
 make install
 make check
 make test
-make compl backend
-make infra up
+make dev
 ```

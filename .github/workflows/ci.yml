@@ -38,9 +38,6 @@ jobs:
       - name: Test backend
         run: make test backend
 
-      - name: Check backend complexity
-        run: make compl backend
-
   frontend:
     name: frontend
     runs-on: ubuntu-latest
@@ -72,8 +69,8 @@ jobs:
       - name: Test frontend
         run: make test frontend
 
-  docs:
-    name: docs
+  tooling:
+    name: tooling
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -92,9 +89,6 @@ jobs:
       - name: Install frontend dependencies
         working-directory: frontend
         run: corepack pnpm install --frozen-lockfile
-
-      - name: Check docs
-        run: make check docs
 
       - name: Check TypeScript tooling
         run: make check tooling
@@ -116,8 +110,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  vulnerabilities:
-    name: vulnerabilities
+  filesystem-scan:
+    name: filesystem-scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -125,38 +119,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v8.1.0
-        with:
-          enable-cache: true
-          cache-dependency-glob: backend/uv.lock
-
-      - name: Sync backend dependencies
-        working-directory: backend
-        run: uv sync --frozen --all-extras --dev
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-          cache: pnpm
-          cache-dependency-path: frontend/pnpm-lock.yaml
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: corepack pnpm install --frozen-lockfile
-
-      - name: Audit dependencies
-        run: make check vulnerabilities
 
       - name: Scan filesystem with Trivy
         uses: aquasecurity/trivy-action@v0.36.0

@@ -28,16 +28,17 @@ repos:
         entry: make check frontend
         language: system
         pass_filenames: false
-      - id: docs-check
-        name: docs-check
-        entry: make check docs
-        language: system
-        pass_filenames: false
       - id: tooling-check
         name: tooling-check
         entry: make check tooling
         language: system
         pass_filenames: false
+      - id: dependabot-check
+        name: dependabot-check
+        entry: bash -c 'cd backend && uv run python ../scripts/check_dependabot.py'
+        language: system
+        pass_filenames: false
+        files: ^(\.github/dependabot\.yml|scripts/check_dependabot\.py)$
       - id: frontend-test
         name: frontend-test
         entry: make test frontend

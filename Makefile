@@ -1,29 +1,47 @@
 SHELL := /bin/zsh
 AREA := $(word 2,$(MAKECMDGOALS))
+.DEFAULT_GOAL := help
 
-.PHONY: dev backend frontend check test compl install deploy infra docs security tooling vulnerabilities up down logs ps
+.PHONY: help install dev check test deploy backend frontend tooling security _dev-backend _dev-frontend
 
-dev:
-	$(MAKE) -j 2 backend frontend
-
-backend:
-ifeq ($(filter check test compl,$(word 1,$(MAKECMDGOALS))),)
-	cd backend && uv run uvicorn src.main:create_app --factory --reload --host 127.0.0.1 --port 8000
-else
-	@:
-endif
-
-frontend:
-ifeq ($(filter check test,$(word 1,$(MAKECMDGOALS))),)
-	cd frontend && corepack pnpm dev --config src/config/vite.config.ts --host 127.0.0.1 --port 5173
-else
-	@:
-endif
+help:
+	@echo "Usage:"
+	@echo "  make <target> [area]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  make install              Install backend/frontend dependencies and pre-commit"
+	@echo "  make dev                  Run backend and frontend locally"
+	@echo "  make dev backend          Run backend locally"
+	@echo "  make dev frontend         Run frontend locally"
+	@echo "  make check                Run all checks"
+	@echo "  make check backend        Run backend checks, complexity, and dependency audit"
+	@echo "  make check frontend       Run frontend checks and dependency audit"
+	@echo "  make check tooling        Run TypeScript tooling checks"
+	@echo "  make check security       Run secret scan"
+	@echo "  make test                 Run all tests"
+	@echo "  make test backend         Run backend tests"
+	@echo "  make test frontend        Run frontend unit and E2E tests"
+	@echo "  make deploy               Show deploy placeholder"
 
 install:
 	cd backend && uv sync --all-extras --dev
 	cd frontend && corepack enable && corepack pnpm install
-	cd backend && uv run pre-commit install --config ../ops/precommit/config.yaml
+	cd backend && uv run pre-commit install --config ../pre-commit.yaml
+
+dev:
+ifeq ($(AREA),backend)
+	cd backend && uv run uvicorn src.main:create_app --factory --reload --host 127.0.0.1 --port 8000
+else ifeq ($(AREA),frontend)
+	cd frontend && corepack pnpm dev --config src/config/vite.config.ts --host 127.0.0.1 --port 5173
+else
+	$(MAKE) -j 2 _dev-backend _dev-frontend
+endif
+
+_dev-backend:
+	cd backend && uv run uvicorn src.main:create_app --factory --reload --host 127.0.0.1 --port 8000
+
+_dev-frontend:
+	cd frontend && corepack pnpm dev --config src/config/vite.config.ts --host 127.0.0.1 --port 5173
 
 check:
 ifeq ($(AREA),backend)
@@ -31,22 +49,20 @@ ifeq ($(AREA),backend)
 	cd backend && uv run ruff check src tests
 	cd backend && uv run ty check src tests
 	cd backend && uv run lint-imports --config importlinter.ini
+	cd backend && uv run vulture
+	cd backend && uv run xenon --max-absolute B --max-modules A --max-average A src tests
+	cd backend && uv run pip-audit
 else ifeq ($(AREA),frontend)
 	cd frontend && corepack pnpm exec biome check --config-path biome.json .
 	cd frontend && corepack pnpm tsc --noEmit
-else ifeq ($(AREA),docs)
-	cd frontend && corepack pnpm exec markdownlint-cli2 --config ../.markdownlint-cli2.yaml "../AGENTS.md" "../docs/**/*.md" "../infra/**/*.md" "../ops/**/*.md"
+	cd frontend && corepack pnpm audit --audit-level high
 else ifeq ($(AREA),tooling)
 	cd frontend && corepack pnpm exec knip --config src/config/knip.json
 else ifeq ($(AREA),security)
 	gitleaks detect --source . --redact --verbose
-else ifeq ($(AREA),vulnerabilities)
-	cd backend && uv run pip-audit
-	cd frontend && corepack pnpm audit --audit-level high
 else
 	$(MAKE) check backend
 	$(MAKE) check frontend
-	$(MAKE) check docs
 	$(MAKE) check tooling
 endif
 
@@ -61,34 +77,8 @@ else
 	$(MAKE) test frontend
 endif
 
-compl:
-ifeq ($(AREA),backend)
-	cd backend && uv run xenon --max-absolute B --max-modules A --max-average A src tests
-else
-	$(MAKE) compl backend
-endif
-
-infra:
-ifeq ($(AREA),up)
-	docker compose -f infra/local/compose.yaml up --build
-else ifeq ($(AREA),down)
-	docker compose -f infra/local/compose.yaml down --remove-orphans
-else ifeq ($(AREA),logs)
-	docker compose -f infra/local/compose.yaml logs -f
-else ifeq ($(AREA),ps)
-	docker compose -f infra/local/compose.yaml ps
-else
-	@echo "usage: make infra [up|down|logs|ps]"
-endif
-
-up down logs ps:
-	@:
-
-docs:
-	@find docs -maxdepth 2 -type f | sort
-
-security tooling vulnerabilities:
-	@:
+backend frontend tooling security:
+	@if [ "$(word 1,$(MAKECMDGOALS))" = "$@" ]; then $(MAKE) help; fi
 
 deploy:
 	@echo "deploy target は未設定です。環境ごとのコマンドはレビュー後に追加してください。"

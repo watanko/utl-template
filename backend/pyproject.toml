@@ -53,7 +53,24 @@ select = ["E", "F", "I", "B", "UP", "PLR", "RUF", "C90"]
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["PLR2004"]
 
+[tool.vulture]
+paths = ["src", "tests"]
+min_confidence = 60
+ignore_names = [
+  "Base",
+  "Result",
+  "ServiceName",
+  "SessionFactory",
+  "app_env",
+  "create",
+  "error",
+  "get_health",
+  "model_config",
+]
+
 [tool.uv]
 dev-dependencies = [
     "pip-audit>=2.10.0",
+    "pyyaml>=6.0.3",
+    "vulture>=2.16",
 ]

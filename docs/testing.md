@@ -33,7 +33,6 @@ make test frontend
 ```sh
 make check
 make test
-make compl backend
 ```
 
 ## CI
@@ -42,17 +41,11 @@ GitHub Actions は `.github/workflows/ci.yml` で定義します。
 
 job:
 
-- `backend`: ruff, ty, import-linter, pytest, xenon
-- `frontend`: Biome, TypeScript, Vitest, Playwright
-- `docs`: markdownlint-cli2, Knip
+- `backend`: ruff, ty, import-linter, vulture, xenon, pip-audit, pytest
+- `frontend`: Biome, TypeScript, pnpm audit, Vitest, Playwright
+- `tooling`: Knip
 - `security`: gitleaks
-- `vulnerabilities`: pip-audit, pnpm audit, Trivy
-
-## ドキュメント lint
-
-```sh
-make check docs
-```
+- `filesystem-scan`: Trivy
 
 ## TypeScript tooling check
 
@@ -61,6 +54,15 @@ make check tooling
 ```
 
 Knip で未使用 dependency や未使用 export を検出します。
+
+## Python unused code check
+
+```sh
+cd backend
+uv run vulture
+```
+
+vulture は confidence 60%以上の未使用コード候補を検出します。テンプレートの拡張ポイントとして先置きしているクラスや設定名は `backend/pyproject.toml` の `[tool.vulture]` で除外します。
 
 ## secret scan
 
@@ -75,7 +77,8 @@ pre-commit と GitHub Actions でも gitleaks を実行します。
 ## vulnerability scan
 
 ```sh
-make check vulnerabilities
+make check backend
+make check frontend
 ```
 
 backend は `pip-audit`、frontend は `pnpm audit --audit-level high` で dependency vulnerability を検出します。

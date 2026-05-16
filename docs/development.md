@@ -14,10 +14,22 @@ backend と frontend を直接起動します。
 make dev
 ```
 
+backend だけを起動します。
+
+```sh
+make dev backend
+```
+
+frontend だけを起動します。
+
+```sh
+make dev frontend
+```
+
 Docker Compose で統合環境を起動します。
 
 ```sh
-make infra up
+docker compose -f docker/compose.yaml up --build
 ```
 
 ## 依存追加
@@ -40,5 +52,7 @@ corepack pnpm add <package>
 
 ```sh
 cd backend
-uv run pre-commit install --config ../ops/precommit/config.yaml
+uv run pre-commit install --config ../pre-commit.yaml
 ```
+
+Dependabot 設定は pre-commit の `dependabot-check` で YAML 構文と必須 ecosystem を検証します。
