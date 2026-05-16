@@ -50,7 +50,25 @@ line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "PLR", "RUF", "C90", "S"]
+select = ["ALL"]
+ignore = [
+  "COM812", # 末尾カンマの追加は Ruff formatter に任せるため。
+  "COM819", # 禁止される末尾カンマの削除は Ruff formatter に任せるため。
+  "D203",   # pydocstyle の規約衝突回避。D211 を採用するため。
+  "D206",   # docstring のインデント整形は Ruff formatter に任せるため。
+  "D213",   # pydocstyle の規約衝突回避。D212 を採用するため。
+  "D300",   # docstring の quote style は Ruff formatter に任せるため。
+  "E111",   # インデント幅の整形は Ruff formatter に任せるため。
+  "E114",   # コメントのインデント幅の整形は Ruff formatter に任せるため。
+  "E117",   # 過剰インデントの整形は Ruff formatter に任せるため。
+  "ISC002", # 複数行の暗黙的文字列結合の整形は Ruff formatter に任せるため。
+  "Q000",   # インライン文字列の quote style は Ruff formatter に任せるため。
+  "Q001",   # 複数行文字列の quote style は Ruff formatter に任せるため。
+  "Q002",   # docstring の quote style は Ruff formatter に任せるため。
+  "Q003",   # 不要な quote escape の整理は Ruff formatter に任せるため。
+  "Q004",   # 不要な quote escape の削除は Ruff formatter に任せるため。
+  "W191",   # タブインデントの整形は Ruff formatter に任せるため。
+]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["PLR2004", "S101"]

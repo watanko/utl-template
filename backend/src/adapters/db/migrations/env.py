@@ -1,3 +1,5 @@
+"""Alembic migration runtime configuration."""
+
 from logging.config import fileConfig
 
 from alembic import context
@@ -8,6 +10,11 @@ from src.config import get_settings
 
 config = context.config
 target_metadata = Base.metadata
+
+
+class AlembicConfigSectionError(RuntimeError):
+    """Raised when Alembic cannot provide the active config section."""
+
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -21,8 +28,8 @@ def get_database_url() -> str:
 
     Raises:
         pydantic.ValidationError: If settings are invalid.
-    """
 
+    """
     return get_settings().database_url
 
 
@@ -34,8 +41,8 @@ def run_migrations_offline() -> None:
 
     Raises:
         alembic.util.exc.CommandError: If Alembic cannot configure the migration context.
-    """
 
+    """
     context.configure(
         url=get_database_url(),
         target_metadata=target_metadata,
@@ -55,11 +62,11 @@ def run_migrations_online() -> None:
 
     Raises:
         sqlalchemy.exc.SQLAlchemyError: If database connection or migration execution fails.
-    """
 
+    """
     section = config.get_section(config.config_ini_section)
     if section is None:
-        raise RuntimeError("Alembic config section is missing.")
+        raise AlembicConfigSectionError
 
     section["sqlalchemy.url"] = get_database_url()
     connectable = engine_from_config(

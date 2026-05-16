@@ -41,7 +41,7 @@ GitHub Actions は `.github/workflows/ci.yml` で定義します。
 
 job:
 
-- `backend`: ruff, Ruff security rules, ty, deptry, import-linter, vulture, xenon, pip-audit, pytest
+- `backend`: ruff format, Ruff `ALL` rules, ty, deptry, import-linter, vulture, xenon, pip-audit, pytest
 - `frontend`: Biome, TypeScript, pnpm audit, Vitest, Playwright
 - `tooling`: Knip, Dependabot config check, OpenAPI freshness check, actionlint, hadolint, Terraform validate, TFLint
 - `security`: gitleaks, zizmor

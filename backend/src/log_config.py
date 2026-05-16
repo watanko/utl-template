@@ -1,6 +1,31 @@
+"""Structured logging configuration."""
+
 import logging
 
 import structlog
+
+
+class InvalidLogLevelError(ValueError):
+    """Raised when the configured log level name is unknown.
+
+    Attributes:
+        log_level: Unknown log level name.
+
+    """
+
+    def __init__(self, log_level: str) -> None:
+        """Initialize the error.
+
+        Args:
+            log_level: Unknown log level name.
+
+        Returns:
+            None.
+
+        """
+        self.log_level = log_level
+        message = f"Unknown log level: {log_level}"
+        super().__init__(message)
 
 
 def configure_logging(log_level: str) -> None:
@@ -13,12 +38,15 @@ def configure_logging(log_level: str) -> None:
         None.
 
     Raises:
-        ValueError: If the log level name is unknown.
-    """
+        InvalidLogLevelError: If the log level name is unknown.
 
-    level = logging.getLevelName(log_level.upper())
-    if not isinstance(level, int):
-        raise ValueError(f"Unknown log level: {log_level}")
+    """
+    levels = logging.getLevelNamesMapping()
+    level_name = log_level.upper()
+    if level_name not in levels:
+        raise InvalidLogLevelError(log_level)
+
+    level = levels[level_name]
 
     logging.basicConfig(format="%(message)s", level=level)
     structlog.configure(

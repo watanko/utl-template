@@ -1,6 +1,8 @@
+"""Domain value objects."""
+
 from dataclasses import dataclass
 
-from src.core.domain.exceptions import DomainValidationError
+from src.core.domain.exceptions import BlankServiceNameError
 
 
 @dataclass(frozen=True, slots=True)
@@ -9,6 +11,7 @@ class ServiceName:
 
     Attributes:
         value: Non-empty service name.
+
     """
 
     value: str
@@ -21,7 +24,7 @@ class ServiceName:
 
         Raises:
             DomainValidationError: If the service name is blank.
-        """
 
+        """
         if not self.value.strip():
-            raise DomainValidationError("Service name must not be blank.")
+            raise BlankServiceNameError

@@ -1,3 +1,5 @@
+"""Health check use case."""
+
 from src.core.application.dto import HealthCheckOutput
 from src.core.application.ports.health_query import HealthQuery
 
@@ -7,6 +9,7 @@ class GetHealth:
 
     Attributes:
         health_query: Port used to read service health.
+
     """
 
     def __init__(self, health_query: HealthQuery) -> None:
@@ -17,8 +20,8 @@ class GetHealth:
 
         Returns:
             None.
-        """
 
+        """
         self.health_query = health_query
 
     def execute(self) -> HealthCheckOutput:
@@ -29,8 +32,8 @@ class GetHealth:
 
         Raises:
             DomainError: If the health status is invalid.
-        """
 
+        """
         status = self.health_query.get_status()
         return HealthCheckOutput(
             service_id=status.service_id,

@@ -1,3 +1,5 @@
+"""SQLAlchemy ORM model declarations."""
+
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -6,4 +8,5 @@ class Base(DeclarativeBase):
 
     Attributes:
         metadata: SQLAlchemy table metadata inherited from DeclarativeBase.
+
     """

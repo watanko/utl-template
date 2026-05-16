@@ -1,3 +1,5 @@
+"""Application data transfer objects."""
+
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -10,6 +12,7 @@ class HealthCheckOutput:
         service_id: Stable service identifier.
         name: Service display name.
         healthy: Whether the service is available.
+
     """
 
     service_id: UUID

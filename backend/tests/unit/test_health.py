@@ -1,3 +1,5 @@
+"""Health endpoint tests."""
+
 from fastapi.testclient import TestClient
 
 from src.main import create_app
@@ -5,7 +7,6 @@ from src.main import create_app
 
 def test_health_endpoint_returns_status() -> None:
     """A should expose service health through the API."""
-
     client = TestClient(create_app())
 
     response = client.get("/health")

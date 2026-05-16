@@ -1,3 +1,5 @@
+"""SQLAlchemy session factory."""
+
 from collections.abc import Iterator
 
 from sqlalchemy import Engine, create_engine
@@ -10,6 +12,7 @@ class SessionFactory:
     Attributes:
         engine: SQLAlchemy engine.
         maker: Configured sessionmaker.
+
     """
 
     def __init__(self, database_url: str) -> None:
@@ -20,8 +23,8 @@ class SessionFactory:
 
         Returns:
             None.
-        """
 
+        """
         self.engine: Engine = create_engine(database_url)
         self.maker: sessionmaker[Session] = sessionmaker(bind=self.engine)
 
@@ -33,7 +36,7 @@ class SessionFactory:
 
         Raises:
             sqlalchemy.exc.SQLAlchemyError: If session creation or close fails.
-        """
 
+        """
         with self.maker() as session:
             yield session

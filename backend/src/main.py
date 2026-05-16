@@ -1,3 +1,5 @@
+"""FastAPI application entrypoint."""
+
 from fastapi import FastAPI
 
 from src.api.routers.health import router as health_router
@@ -14,8 +16,8 @@ def create_app() -> FastAPI:
     Raises:
         pydantic.ValidationError: If application settings are invalid.
         ValueError: If logging settings are invalid.
-    """
 
+    """
     settings = get_settings()
     configure_logging(settings.log_level)
 

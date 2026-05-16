@@ -1,3 +1,5 @@
+"""Health query port contract."""
+
 from abc import ABC, abstractmethod
 
 from src.core.domain.entities import HealthStatus
@@ -8,6 +10,7 @@ class HealthQuery(ABC):
 
     Attributes:
         None.
+
     """
 
     @abstractmethod
@@ -19,4 +22,5 @@ class HealthQuery(ABC):
 
         Raises:
             DomainError: If health status cannot be represented.
+
         """

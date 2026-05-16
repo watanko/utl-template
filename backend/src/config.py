@@ -1,3 +1,5 @@
+"""Application configuration schema."""
+
 from functools import lru_cache
 from typing import Literal
 
@@ -14,6 +16,7 @@ class Settings(BaseSettings):
         database_url: SQLAlchemy database URL.
         jwt_secret: Secret key used for JWT signing.
         log_level: Structlog log level.
+
     """
 
     model_config = SettingsConfigDict(
@@ -53,6 +56,6 @@ def get_settings() -> Settings:
 
     Raises:
         pydantic.ValidationError: If environment variables are invalid.
-    """
 
+    """
     return Settings()

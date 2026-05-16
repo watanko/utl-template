@@ -1,3 +1,5 @@
+"""Result containers for errorable external operations."""
+
 from dataclasses import dataclass
 from typing import final
 
@@ -9,6 +11,7 @@ class Ok[T]:
 
     Attributes:
         value: Successful result value.
+
     """
 
     value: T
@@ -21,6 +24,7 @@ class Err[E]:
 
     Attributes:
         error: Error value.
+
     """
 
     error: E
