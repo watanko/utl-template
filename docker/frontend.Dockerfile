@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim AS runtime
+FROM node:26-bookworm-slim AS runtime
 
 WORKDIR /workspace/frontend
 
