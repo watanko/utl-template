@@ -3,6 +3,7 @@
   "entry": [
     "src/config/*.ts",
     "src/e2e/*.ts",
+    "src/api/generated/*.ts",
     "src/test/*.ts",
     "src/test/*.tsx"
   ],

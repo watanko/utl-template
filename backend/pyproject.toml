@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "独立したコアレイヤを持つ FastAPI バックエンドテンプレート。"
 requires-python = ">=3.12"
 dependencies = [
+  "alembic>=1.18.4",
   "fastapi>=0.115.0",
   "psycopg[binary]>=3.2.0",
   "pydantic-settings>=2.6.0",
@@ -65,6 +66,7 @@ ignore_names = [
   "create",
   "error",
   "get_health",
+  "jwt_secret",
   "model_config",
 ]
 

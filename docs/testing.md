@@ -43,7 +43,7 @@ job:
 
 - `backend`: ruff, ty, import-linter, vulture, xenon, pip-audit, pytest
 - `frontend`: Biome, TypeScript, pnpm audit, Vitest, Playwright
-- `tooling`: Knip
+- `tooling`: Knip, Dependabot config check, OpenAPI freshness check
 - `security`: gitleaks
 - `filesystem-scan`: Trivy
 
@@ -54,6 +54,11 @@ make check tooling
 ```
 
 Knip で未使用 dependency や未使用 export を検出します。
+
+`make check tooling` は以下も検証します。
+
+- `.github/dependabot.yml`
+- `docs/openapi.json`
 
 ## Python unused code check
 

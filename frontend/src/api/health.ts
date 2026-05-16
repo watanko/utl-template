@@ -1,12 +1,13 @@
 import { z } from "zod";
+import type { components } from "./generated/schema";
+
+export type HealthResponse = components["schemas"]["HealthResponse"];
 
 const healthResponseSchema = z.object({
   service_id: z.string().uuid(),
   name: z.string().min(1),
   healthy: z.boolean(),
 });
-
-export type HealthResponse = z.infer<typeof healthResponseSchema>;
 
 export async function fetchHealth(): Promise<HealthResponse> {
   const response = await fetch("/health");

@@ -2,7 +2,7 @@ SHELL := /bin/zsh
 AREA := $(word 2,$(MAKECMDGOALS))
 .DEFAULT_GOAL := help
 
-.PHONY: help install dev check test deploy backend frontend tooling security _dev-backend _dev-frontend
+.PHONY: help install dev check test sync deploy backend frontend tooling security dto _dev-backend _dev-frontend
 
 help:
 	@echo "Usage:"
@@ -21,6 +21,7 @@ help:
 	@echo "  make test                 Run all tests"
 	@echo "  make test backend         Run backend tests"
 	@echo "  make test frontend        Run frontend unit and E2E tests"
+	@echo "  make sync dto             Export OpenAPI and regenerate frontend API types"
 	@echo "  make deploy               Show deploy placeholder"
 
 install:
@@ -58,6 +59,8 @@ else ifeq ($(AREA),frontend)
 	cd frontend && corepack pnpm audit --audit-level high
 else ifeq ($(AREA),tooling)
 	cd frontend && corepack pnpm exec knip --config src/config/knip.json
+	cd backend && uv run python ../scripts/check_dependabot.py
+	cd backend && uv run python ../scripts/check_openapi.py
 else ifeq ($(AREA),security)
 	gitleaks detect --source . --redact --verbose
 else
@@ -79,6 +82,17 @@ endif
 
 backend frontend tooling security:
 	@if [ "$(word 1,$(MAKECMDGOALS))" = "$@" ]; then $(MAKE) help; fi
+
+sync:
+ifeq ($(AREA),dto)
+	cd backend && uv run python ../scripts/export_openapi.py
+	cd frontend && corepack pnpm run generate:api
+else
+	@$(MAKE) help
+endif
+
+dto:
+	@:
 
 deploy:
 	@echo "deploy target は未設定です。環境ごとのコマンドはレビュー後に追加してください。"

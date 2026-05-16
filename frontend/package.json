@@ -9,6 +9,7 @@
     "build": "tsc --noEmit && vite build --config src/config/vite.config.ts",
     "preview": "vite preview --config src/config/vite.config.ts",
     "biome": "biome check --config-path biome.json .",
+    "generate:api": "openapi-typescript ../docs/openapi.json -o src/api/generated/schema.ts",
     "knip": "knip --config src/config/knip.json",
     "test": "vitest run --config src/config/vite.config.ts --coverage",
     "e2e": "playwright test --config src/config/playwright.config.ts"
@@ -30,6 +31,7 @@
     "@vitest/coverage-v8": "^2.1.4",
     "jsdom": "^25.0.1",
     "knip": "^6.12.2",
+    "openapi-typescript": "^7.13.0",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"
   }

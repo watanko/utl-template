@@ -14,6 +14,7 @@ export default defineConfig({
     setupFiles: "./src/test/setup.ts",
     coverage: {
       include: ["src/api/**/*.ts", "src/ui/**/*.tsx"],
+      exclude: ["src/api/generated/**"],
       thresholds: {
         branches: 90,
         functions: 90,

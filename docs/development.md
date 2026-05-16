@@ -48,6 +48,29 @@ cd frontend
 corepack pnpm add <package>
 ```
 
+## DB migration
+
+Alembic migration を作成します。
+
+```sh
+cd backend
+uv run alembic revision --autogenerate -m "describe change"
+uv run alembic upgrade head
+```
+
+## DTO 同期
+
+backend の FastAPI schema から frontend 型を生成します。
+
+```sh
+make sync dto
+```
+
+生成物:
+
+- `docs/openapi.json`
+- `frontend/src/api/generated/schema.ts`
+
 ## pre-commit
 
 ```sh
