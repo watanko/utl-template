@@ -16,8 +16,8 @@ help:
 	@echo "  make check                Run all checks"
 	@echo "  make check backend        Run backend checks, complexity, and dependency audit"
 	@echo "  make check frontend       Run frontend checks and dependency audit"
-	@echo "  make check tooling        Run TypeScript tooling checks"
-	@echo "  make check security       Run secret scan"
+	@echo "  make check tooling        Run repository tooling checks"
+	@echo "  make check security       Run security checks"
 	@echo "  make test                 Run all tests"
 	@echo "  make test backend         Run backend tests"
 	@echo "  make test frontend        Run frontend unit and E2E tests"
@@ -49,6 +49,7 @@ ifeq ($(AREA),backend)
 	cd backend && uv run ruff format --check src tests
 	cd backend && uv run ruff check src tests
 	cd backend && uv run ty check src tests
+	cd backend && uv run deptry src tests
 	cd backend && uv run lint-imports --config importlinter.ini
 	cd backend && uv run vulture
 	cd backend && uv run xenon --max-absolute B --max-modules A --max-average A src tests
@@ -61,8 +62,16 @@ else ifeq ($(AREA),tooling)
 	cd frontend && corepack pnpm exec knip --config src/config/knip.json
 	cd backend && uv run python ../scripts/check_dependabot.py
 	cd backend && uv run python ../scripts/check_openapi.py
+	actionlint
+	hadolint docker/backend.Dockerfile docker/frontend.Dockerfile
+	terraform -chdir=infra/terraform fmt -check
+	terraform -chdir=infra/terraform init -backend=false
+	terraform -chdir=infra/terraform validate
+	tflint --chdir=infra/terraform --init
+	tflint --chdir=infra/terraform
 else ifeq ($(AREA),security)
 	gitleaks detect --source . --redact --verbose
+	uvx zizmor --offline .
 else
 	$(MAKE) check backend
 	$(MAKE) check frontend

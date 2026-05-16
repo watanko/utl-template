@@ -79,3 +79,13 @@ uv run pre-commit install --config ../pre-commit.yaml
 ```
 
 Dependabot 設定は pre-commit の `dependabot-check` で YAML 構文と必須 ecosystem を検証します。
+
+## 外部 CLI
+
+`make check tooling` と `make check security` は以下の外部 CLI も使用します。CI では workflow 内で setup します。
+
+- `actionlint`
+- `hadolint`
+- `terraform`
+- `tflint`
+- `uvx zizmor`

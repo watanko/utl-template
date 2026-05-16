@@ -41,10 +41,10 @@ GitHub Actions は `.github/workflows/ci.yml` で定義します。
 
 job:
 
-- `backend`: ruff, ty, import-linter, vulture, xenon, pip-audit, pytest
+- `backend`: ruff, Ruff security rules, ty, deptry, import-linter, vulture, xenon, pip-audit, pytest
 - `frontend`: Biome, TypeScript, pnpm audit, Vitest, Playwright
-- `tooling`: Knip, Dependabot config check, OpenAPI freshness check
-- `security`: gitleaks
+- `tooling`: Knip, Dependabot config check, OpenAPI freshness check, actionlint, hadolint, Terraform validate, TFLint
+- `security`: gitleaks, zizmor
 - `filesystem-scan`: Trivy
 
 ## TypeScript tooling check
@@ -59,6 +59,9 @@ Knip で未使用 dependency や未使用 export を検出します。
 
 - `.github/dependabot.yml`
 - `docs/openapi.json`
+- GitHub Actions workflows
+- Dockerfiles
+- Terraform files
 
 ## Python unused code check
 
@@ -78,6 +81,12 @@ make check security
 ```
 
 pre-commit と GitHub Actions でも gitleaks を実行します。
+
+GitHub Actions workflow は zizmor でも検査します。local では以下を実行します。
+
+```sh
+make check security
+```
 
 ## vulnerability scan
 

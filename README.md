@@ -44,11 +44,15 @@ FastAPI backend と React frontend を持つ full-stack project template です�
 | --- | --- | --- |
 | Backend | ruff | Python format と lint |
 | Backend | ty | Python type check |
+| Backend | deptry | Python dependency manifest check |
 | Backend | import-linter | layer 依存方向の検証 |
 | Backend | vulture | 未使用コード検出 |
 | Backend | xenon | code complexity check |
 | Frontend | Biome | TypeScript format と lint |
 | Frontend | Knip | unused dependency / export check |
+| Tooling | actionlint | GitHub Actions syntax and expression lint |
+| Tooling | hadolint | Dockerfile lint |
+| Tooling | TFLint | Terraform lint |
 
 ### Automation / CI
 
@@ -63,8 +67,10 @@ FastAPI backend と React frontend を持つ full-stack project template です�
 | 領域 | 技術 | 用途 |
 | --- | --- | --- |
 | Backend | pip-audit | Python dependency vulnerability scan |
+| Backend | Ruff `S` rules | Python code security lint |
 | Security | gitleaks | secret scan |
 | Security | Trivy | filesystem vulnerability scan |
+| Security | zizmor | GitHub Actions security lint |
 
 ## 主要コマンド
 
