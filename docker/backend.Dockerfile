@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.4.20-python3.12-bookworm AS runtime
+FROM ghcr.io/astral-sh/uv:0.9.30-python3.12-bookworm AS runtime
 
 WORKDIR /workspace/backend
 
