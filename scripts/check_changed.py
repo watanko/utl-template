@@ -8,6 +8,7 @@ from typing import Final, Literal, TypeGuard, cast
 ROOT: Final = Path(__file__).resolve().parents[1]
 Mode = Literal["post-tool", "pre-commit", "changed"]
 HookEvent = Literal["PostToolUse", "PreToolUse"]
+CheckProfile = Literal["fast", "full"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -225,11 +226,30 @@ def staged_paths() -> set[str]:
     return set(run_git(["diff", "--cached", "--name-only"]))
 
 
-def command_for_label(label: str) -> CheckCommand:
+def stage_paths(paths: set[str]) -> None:
+    """Stage paths after automatic fixes.
+
+    Args:
+        paths: Repository-relative paths to stage.
+
+    Returns:
+        None.
+
+    Raises:
+        subprocess.CalledProcessError: If git add fails.
+
+    """
+
+    if paths:
+        subprocess.run(["git", "add", "-A", "--", *sorted(paths)], cwd=ROOT, check=True)
+
+
+def command_for_label(label: str, profile: CheckProfile) -> CheckCommand:
     """Return a check command by label.
 
     Args:
         label: Command label.
+        profile: Check depth profile.
 
     Returns:
         Check command.
@@ -238,6 +258,15 @@ def command_for_label(label: str) -> CheckCommand:
         ValueError: If the label is unknown.
 
     """
+
+    if profile == "fast":
+        commands = {
+            "backend": CheckCommand("make check-fast backend", ("make", "check-fast", "backend")),
+            "frontend": CheckCommand("make check-fast frontend", ("make", "check-fast", "frontend")),
+            "tooling": CheckCommand("make check-fast tooling", ("make", "check-fast", "tooling")),
+            "security": CheckCommand("make check security", ("make", "check", "security")),
+        }
+        return commands[label]
 
     commands = {
         "backend": CheckCommand("make check backend", ("make", "check", "backend")),
@@ -248,11 +277,12 @@ def command_for_label(label: str) -> CheckCommand:
     return commands[label]
 
 
-def select_commands(paths: set[str]) -> list[CheckCommand]:
+def select_commands(paths: set[str], profile: CheckProfile) -> list[CheckCommand]:
     """Select checks for changed paths.
 
     Args:
         paths: Repository-relative changed paths.
+        profile: Check depth profile.
 
     Returns:
         Ordered check commands.
@@ -286,7 +316,7 @@ def select_commands(paths: set[str]) -> list[CheckCommand]:
         if path.startswith(".github/workflows/") or path == "pre-commit.yaml":
             add("security")
 
-    return [command_for_label(label) for label in labels]
+    return [command_for_label(label, profile) for label in labels]
 
 
 def run_command(command: CheckCommand) -> CheckResult:
@@ -517,7 +547,7 @@ def run_post_tool() -> int:
 
     hook_paths = paths_from_hook_input(sys.stdin.read())
     paths = hook_paths or dirty_paths()
-    commands = select_commands(paths)
+    commands = select_commands(paths, "fast")
     try:
         results = run_commands(commands)
     except CheckFailureError as error:
@@ -543,13 +573,15 @@ def run_pre_commit() -> int:
     if not is_git_commit_command(raw_input):
         return 0
 
-    commands = select_commands(staged_paths())
+    paths = staged_paths()
+    commands = select_commands(paths, "full")
     try:
         results = run_commands(commands)
     except CheckFailureError as error:
         write_pre_commit_failure(error)
         return 0
 
+    stage_paths(paths)
     write_pre_commit_result(results)
     return 0
 
@@ -618,7 +650,7 @@ def main() -> None:
     if mode == "pre-commit":
         raise SystemExit(run_pre_commit())
 
-    raise SystemExit(run_plain(select_commands(dirty_paths())))
+    raise SystemExit(run_plain(select_commands(dirty_paths(), "full")))
 
 
 if __name__ == "__main__":

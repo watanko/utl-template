@@ -41,11 +41,13 @@ GitHub Actions は `.github/workflows/ci.yml` で定義します。
 
 job:
 
-- `backend`: ruff format, Ruff `ALL` rules, ty, deptry, import-linter, vulture, xenon, pip-audit, pytest
-- `frontend`: Biome, TypeScript, pnpm audit, Vitest, Playwright
-- `tooling`: Knip, Codex hook config check, Dependabot config check, OpenAPI freshness check, actionlint, hadolint, Terraform validate, TFLint
+- `backend`: ruff format/write, Ruff `ALL` rules with auto-fix, ty, deptry, import-linter, vulture, xenon, pip-audit, pytest
+- `frontend`: Biome write/check, TypeScript, pnpm audit, Vitest, Playwright
+- `tooling`: Knip, Codex hook config check, Dependabot config check, OpenAPI freshness check, actionlint, hadolint, Terraform fmt/validate, TFLint
 - `security`: gitleaks, zizmor
 - `filesystem-scan`: Trivy
+
+`make check-fast ...` は Codex の `PostToolUse` hook 用です。編集直後は Ruff/Biome/TypeScript/ty/actionlint/Terraform fmt など短時間で終わる検査だけを実行し、依存監査や複雑度など重い検査は commit 前または CI で実行します。
 
 ## TypeScript tooling check
 
