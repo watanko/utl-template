@@ -1,15 +1,16 @@
-SHELL := /bin/zsh
+SHELL := /bin/bash
 AREA := $(word 2,$(MAKECMDGOALS))
 .DEFAULT_GOAL := help
 
-.PHONY: help install dev check test sync deploy backend frontend tooling security dto _dev-backend _dev-frontend
+.PHONY: help install install-tools dev check test sync deploy backend frontend tooling security changed dto _dev-backend _dev-frontend
 
 help:
 	@echo "Usage:"
 	@echo "  make <target> [area]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  make install              Install backend/frontend dependencies and pre-commit"
+	@echo "  make install              Install tools, backend/frontend dependencies, and pre-commit"
+	@echo "  make install-tools        Install local CLI tools used by checks"
 	@echo "  make dev                  Run backend and frontend locally"
 	@echo "  make dev backend          Run backend locally"
 	@echo "  make dev frontend         Run frontend locally"
@@ -17,6 +18,7 @@ help:
 	@echo "  make check backend        Run backend checks, complexity, and dependency audit"
 	@echo "  make check frontend       Run frontend checks and dependency audit"
 	@echo "  make check tooling        Run repository tooling checks"
+	@echo "  make check changed        Run checks selected from changed files"
 	@echo "  make check security       Run security checks"
 	@echo "  make test                 Run all tests"
 	@echo "  make test backend         Run backend tests"
@@ -25,9 +27,13 @@ help:
 	@echo "  make deploy               Show deploy placeholder"
 
 install:
+	$(MAKE) install-tools
 	cd backend && uv sync --all-extras --dev
 	cd frontend && corepack enable && corepack pnpm install
 	cd backend && uv run pre-commit install --config ../pre-commit.yaml
+
+install-tools:
+	bash scripts/install_tools.sh
 
 dev:
 ifeq ($(AREA),backend)
@@ -60,6 +66,9 @@ else ifeq ($(AREA),frontend)
 	cd frontend && corepack pnpm audit --audit-level high
 else ifeq ($(AREA),tooling)
 	cd frontend && corepack pnpm exec knip --config src/config/knip.json
+	python3 -m json.tool .codex/hooks.json >/dev/null
+	bash -n .codex/hooks/post-tool-check.sh .codex/hooks/pre-commit-check.sh scripts/install_tools.sh
+	python3 -m py_compile scripts/check_changed.py
 	cd backend && uv run python ../scripts/check_dependabot.py
 	cd backend && uv run python ../scripts/check_openapi.py
 	actionlint
@@ -72,6 +81,8 @@ else ifeq ($(AREA),tooling)
 else ifeq ($(AREA),security)
 	gitleaks detect --source . --redact --verbose
 	uvx zizmor --offline .
+else ifeq ($(AREA),changed)
+	python3 scripts/check_changed.py changed
 else
 	$(MAKE) check backend
 	$(MAKE) check frontend
@@ -89,7 +100,7 @@ else
 	$(MAKE) test frontend
 endif
 
-backend frontend tooling security:
+backend frontend tooling security changed:
 	@if [ "$(word 1,$(MAKECMDGOALS))" = "$@" ]; then $(MAKE) help; fi
 
 sync:

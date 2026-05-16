@@ -1,4 +1,5 @@
 .DS_Store
+.codex/config.local.toml
 .env
 .env.*
 !.env.example

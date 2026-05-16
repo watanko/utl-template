@@ -43,7 +43,7 @@ job:
 
 - `backend`: ruff format, Ruff `ALL` rules, ty, deptry, import-linter, vulture, xenon, pip-audit, pytest
 - `frontend`: Biome, TypeScript, pnpm audit, Vitest, Playwright
-- `tooling`: Knip, Dependabot config check, OpenAPI freshness check, actionlint, hadolint, Terraform validate, TFLint
+- `tooling`: Knip, Codex hook config check, Dependabot config check, OpenAPI freshness check, actionlint, hadolint, Terraform validate, TFLint
 - `security`: gitleaks, zizmor
 - `filesystem-scan`: Trivy
 
@@ -58,6 +58,9 @@ Knip で未使用 dependency や未使用 export を検出します。
 `make check tooling` は以下も検証します。
 
 - `.github/dependabot.yml`
+- `.codex/hooks.json`
+- `.codex/hooks/*.sh`
+- `scripts/check_changed.py`
 - `docs/openapi.json`
 - GitHub Actions workflows
 - Dockerfiles
