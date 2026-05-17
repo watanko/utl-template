@@ -1,3 +1,4 @@
+# Disabled template. Rename this file to ci.yml to enable GitHub Actions.
 name: ci
 
 on:

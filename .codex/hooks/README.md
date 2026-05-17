@@ -29,7 +29,7 @@ hook 定義は `.codex/hooks.json` にあります。Codex の `/hooks` で proj
 - `task check:tooling` は `terraform fmt` を実行します。
 - `task check:fast:backend` は Ruff format/fix と ty だけを実行します。
 - `task check:fast:frontend` は Biome write/check と TypeScript check だけを実行します。
-- `task check:fast:tooling` は hook config 構文、`actionlint`, `terraform fmt` だけを実行します。
+- `task check:fast:tooling` は hook config 構文、有効な GitHub Actions workflow がある場合の `actionlint`, `terraform fmt` だけを実行します。
 - `PreToolUse` の `git commit ...` では、自動修正後に対象 staged files を `git add -A` で再 stage します。
 - 自動修正できない検査で失敗した場合、`PostToolUse` は `decision: "block"` と失敗理由を返します。
 - 自動修正後も `git commit ...` 前の検査が失敗した場合、`PreToolUse` は `permissionDecision: "deny"` を返します。

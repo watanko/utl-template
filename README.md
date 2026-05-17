@@ -50,7 +50,7 @@ FastAPI backend と React frontend を持つ full-stack project template です�
 | Backend | xenon | code complexity check |
 | Frontend | Biome | TypeScript format と lint |
 | Frontend | Knip | unused dependency / export check |
-| Tooling | actionlint | GitHub Actions syntax and expression lint |
+| Tooling | actionlint | GitHub Actions workflow を有効化した場合の syntax and expression lint |
 | Tooling | hadolint | Dockerfile lint |
 | Tooling | TFLint | Terraform lint |
 
@@ -58,7 +58,7 @@ FastAPI backend と React frontend を持つ full-stack project template です�
 
 | 領域 | 技術 | 用途 |
 | --- | --- | --- |
-| Automation | GitHub Actions | CI |
+| Automation | GitHub Actions | 無効化済みの CI workflow template |
 | Automation | Dependabot | dependency update PR |
 | Automation | pre-commit | commit 前の local checks |
 
@@ -70,7 +70,7 @@ FastAPI backend と React frontend を持つ full-stack project template です�
 | Backend | Ruff `ALL` rules | Python code security lint を含む包括的な静的解析 |
 | Security | gitleaks | secret scan |
 | Security | Trivy | filesystem vulnerability scan |
-| Security | zizmor | GitHub Actions security lint |
+| Security | zizmor | GitHub Actions workflow を有効化した場合の security lint |
 
 ## 主要コマンド
 

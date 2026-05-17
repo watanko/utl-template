@@ -37,7 +37,9 @@ task test
 
 ## CI
 
-GitHub Actions は `.github/workflows/ci.yml` で定義します。
+GitHub Actions は無効化済みです。workflow template は `.github/workflows/ci.yml.disabled` として保持します。
+
+再有効化する場合は `.github/workflows/ci.yml` に戻してください。想定 job は以下です。
 
 job:
 
@@ -64,7 +66,7 @@ Knip で未使用 dependency や未使用 export を検出します。
 - `.codex/hooks/*.sh`
 - `scripts/check_changed.py`
 - `docs/openapi.json`
-- GitHub Actions workflows
+- 有効な GitHub Actions workflows
 - Dockerfiles
 - Terraform files
 
@@ -85,9 +87,9 @@ vulture は confidence 60%以上の未使用コード候補を検出します。
 task check:security
 ```
 
-pre-commit と GitHub Actions でも gitleaks を実行します。
+pre-commit で gitleaks を実行します。GitHub Actions を再有効化する場合は CI でも実行します。
 
-GitHub Actions workflow は zizmor でも検査します。local では以下を実行します。
+GitHub Actions workflow を再有効化する場合は zizmor でも検査します。local では以下を実行します。
 
 ```sh
 task check:security
@@ -102,4 +104,4 @@ task check:frontend
 
 backend は `pip-audit`、frontend は `pnpm audit --audit-level high` で dependency vulnerability を検出します。
 
-GitHub Actions では Trivy の filesystem scan も実行し、High / Critical の検出結果を SARIF としてアップロードします。
+GitHub Actions を再有効化する場合は Trivy の filesystem scan も実行し、High / Critical の検出結果を SARIF としてアップロードします。

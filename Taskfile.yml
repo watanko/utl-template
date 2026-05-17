@@ -70,11 +70,11 @@ tasks:
     cmds:
       - cd frontend && corepack pnpm exec knip --config src/config/knip.json
       - python3 -m json.tool .codex/hooks.json >/dev/null
-      - bash -n .codex/hooks/post-tool-check.sh .codex/hooks/pre-commit-check.sh scripts/install_tools.sh
+      - bash -n .codex/hooks/post-tool-check.sh .codex/hooks/pre-commit-check.sh scripts/check_github_actions.sh scripts/install_tools.sh
       - python3 -m py_compile scripts/check_changed.py
       - cd backend && uv run python ../scripts/check_dependabot.py
       - cd backend && uv run python ../scripts/check_openapi.py
-      - actionlint
+      - bash scripts/check_github_actions.sh
       - hadolint docker/backend.Dockerfile docker/frontend.Dockerfile
       - terraform -chdir=infra/terraform fmt
       - terraform -chdir=infra/terraform init -backend=false
@@ -117,9 +117,9 @@ tasks:
     desc: Run fast repository tooling checks
     cmds:
       - python3 -m json.tool .codex/hooks.json >/dev/null
-      - bash -n .codex/hooks/post-tool-check.sh .codex/hooks/pre-commit-check.sh scripts/install_tools.sh
+      - bash -n .codex/hooks/post-tool-check.sh .codex/hooks/pre-commit-check.sh scripts/check_github_actions.sh scripts/install_tools.sh
       - python3 -m py_compile scripts/check_changed.py
-      - actionlint
+      - bash scripts/check_github_actions.sh
       - terraform -chdir=infra/terraform fmt
 
   test:

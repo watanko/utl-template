@@ -102,7 +102,7 @@ hook は `scripts/check_changed.py` で変更ファイルを分類します。`P
 - macOS: `Brewfile` 経由で Homebrew package を導入します。
 - Ubuntu: `scripts/install_tools.sh` 経由で apt, HashiCorp apt repository, Go install, release binary を組み合わせて導入します。
 
-CI では workflow 内で setup します。
+GitHub Actions は無効化済みです。再有効化する場合は `.github/workflows/ci.yml.disabled` を `.github/workflows/ci.yml` に戻し、workflow 内で setup します。
 
 - `actionlint`
 - `gitleaks`
