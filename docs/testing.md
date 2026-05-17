@@ -5,7 +5,7 @@
 backend は pytest を使用します。
 
 ```sh
-make test backend
+task test:backend
 ```
 
 対象:
@@ -19,7 +19,7 @@ make test backend
 frontend は Vitest と Playwright を使用します。
 
 ```sh
-make test frontend
+task test:frontend
 ```
 
 対象:
@@ -31,8 +31,8 @@ make test frontend
 ## 全体検証
 
 ```sh
-make check
-make test
+task check
+task test
 ```
 
 ## CI
@@ -47,17 +47,17 @@ job:
 - `security`: gitleaks, zizmor
 - `filesystem-scan`: Trivy
 
-`make check-fast ...` は Codex の `PostToolUse` hook 用です。編集直後は Ruff/Biome/TypeScript/ty/actionlint/Terraform fmt など短時間で終わる検査だけを実行し、依存監査や複雑度など重い検査は commit 前または CI で実行します。
+`task check:fast:...` は Codex の `PostToolUse` hook 用です。編集直後は Ruff/Biome/TypeScript/ty/actionlint/Terraform fmt など短時間で終わる検査だけを実行し、依存監査や複雑度など重い検査は commit 前または CI で実行します。
 
 ## TypeScript tooling check
 
 ```sh
-make check tooling
+task check:tooling
 ```
 
 Knip で未使用 dependency や未使用 export を検出します。
 
-`make check tooling` は以下も検証します。
+`task check:tooling` は以下も検証します。
 
 - `.github/dependabot.yml`
 - `.codex/hooks.json`
@@ -82,7 +82,7 @@ vulture は confidence 60%以上の未使用コード候補を検出します。
 ローカルに `gitleaks` がある場合は以下で実行できます。
 
 ```sh
-make check security
+task check:security
 ```
 
 pre-commit と GitHub Actions でも gitleaks を実行します。
@@ -90,14 +90,14 @@ pre-commit と GitHub Actions でも gitleaks を実行します。
 GitHub Actions workflow は zizmor でも検査します。local では以下を実行します。
 
 ```sh
-make check security
+task check:security
 ```
 
 ## vulnerability scan
 
 ```sh
-make check backend
-make check frontend
+task check:backend
+task check:frontend
 ```
 
 backend は `pip-audit`、frontend は `pnpm audit --audit-level high` で dependency vulnerability を検出します。

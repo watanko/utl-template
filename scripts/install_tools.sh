@@ -3,6 +3,7 @@ set -euo pipefail
 
 readonly ACTIONLINT_PACKAGE="github.com/rhysd/actionlint/cmd/actionlint@latest"
 readonly GITLEAKS_PACKAGE="github.com/gitleaks/gitleaks/v8@latest"
+readonly TASK_PACKAGE="github.com/go-task/task/v3/cmd/task@latest"
 
 sudo_if_needed() {
   if [ "$(id -u)" -eq 0 ]; then
@@ -19,6 +20,7 @@ install_macos_tools() {
   fi
 
   brew bundle --file Brewfile
+  install_tflint_release Darwin
 }
 
 install_terraform_ubuntu() {
@@ -56,9 +58,47 @@ install_hadolint_linux() {
   sudo_if_needed mv /tmp/hadolint /usr/local/bin/hadolint
 }
 
-install_tflint_linux() {
-  curl -sSfL https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh \
-    | sudo_if_needed bash
+install_tflint_release() {
+  local os_name
+  os_name="$1"
+
+  local os
+  case "$os_name" in
+    Darwin) os="darwin" ;;
+    Linux) os="linux" ;;
+    *)
+      echo "Unsupported OS for tflint: ${os_name}"
+      exit 1
+      ;;
+  esac
+
+  local arch
+  arch="$(uname -m)"
+  case "$arch" in
+    x86_64) arch="amd64" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *)
+      echo "Unsupported architecture for tflint: ${arch}"
+      exit 1
+      ;;
+  esac
+
+  local tmp_dir
+  tmp_dir="$(mktemp -d)"
+
+  curl -sSfL \
+    -o "$tmp_dir/tflint.zip" \
+    "https://github.com/terraform-linters/tflint/releases/latest/download/tflint_${os}_${arch}.zip"
+  unzip -o "$tmp_dir/tflint.zip" -d "$tmp_dir" >/dev/null
+  chmod +x "$tmp_dir/tflint"
+
+  if [ "$os_name" = "Darwin" ]; then
+    mv "$tmp_dir/tflint" "$(brew --prefix)/bin/tflint"
+  else
+    sudo_if_needed mv "$tmp_dir/tflint" /usr/local/bin/tflint
+  fi
+
+  rm -rf "$tmp_dir"
 }
 
 install_go_tools() {
@@ -67,9 +107,11 @@ install_go_tools() {
 
   GOBIN="$bin_dir" go install "$ACTIONLINT_PACKAGE"
   GOBIN="$bin_dir" go install "$GITLEAKS_PACKAGE"
+  GOBIN="$bin_dir" go install "$TASK_PACKAGE"
 
   sudo_if_needed mv "$bin_dir/actionlint" /usr/local/bin/actionlint
   sudo_if_needed mv "$bin_dir/gitleaks" /usr/local/bin/gitleaks
+  sudo_if_needed mv "$bin_dir/task" /usr/local/bin/task
   rmdir "$bin_dir"
 }
 
@@ -87,9 +129,9 @@ install_ubuntu_tools() {
   fi
 
   sudo_if_needed apt-get update
-  sudo_if_needed apt-get install -y ca-certificates curl gnupg golang-go wget
+  sudo_if_needed apt-get install -y ca-certificates curl gnupg golang-go unzip wget
   install_terraform_ubuntu
-  install_tflint_linux
+  install_tflint_release Linux
   install_hadolint_linux
   install_go_tools
 }

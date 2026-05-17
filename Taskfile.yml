@@ -1,0 +1,151 @@
+version: "3"
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  help:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  install:
+    desc: Install tools, backend/frontend dependencies, and pre-commit
+    cmds:
+      - task install:tools
+      - cd backend && uv sync --all-extras --dev
+      - cd frontend && corepack enable && corepack pnpm install
+      - cd backend && uv run pre-commit install --config ../pre-commit.yaml
+
+  install:tools:
+    desc: Install local CLI tools used by checks
+    cmds:
+      - bash scripts/install_tools.sh
+
+  dev:
+    desc: Run backend and frontend locally
+    cmds:
+      - bash -c 'task dev:backend & task dev:frontend & wait'
+
+  dev:backend:
+    desc: Run backend locally
+    cmds:
+      - cd backend && uv run uvicorn src.main:create_app --factory --reload --host 127.0.0.1 --port 8000
+
+  dev:frontend:
+    desc: Run frontend locally
+    cmds:
+      - cd frontend && corepack pnpm dev --config src/config/vite.config.ts --host 127.0.0.1 --port 5173
+
+  check:
+    desc: Run all checks and available auto-fixes
+    cmds:
+      - task check:backend
+      - task check:frontend
+      - task check:tooling
+
+  check:backend:
+    desc: Run backend auto-fixes, checks, complexity, and dependency audit
+    cmds:
+      - cd backend && uv run ruff format src tests
+      - cd backend && uv run ruff check --fix src tests
+      - cd backend && uv run ty check src tests
+      - cd backend && uv run deptry src tests
+      - cd backend && uv run lint-imports --config importlinter.ini
+      - cd backend && uv run vulture
+      - cd backend && uv run xenon --max-absolute B --max-modules A --max-average A src tests
+      - cd backend && uv run pip-audit
+
+  check:frontend:
+    desc: Run frontend auto-fixes, checks, and dependency audit
+    cmds:
+      - cd frontend && corepack pnpm exec biome check --write --config-path biome.json .
+      - cd frontend && corepack pnpm tsc --noEmit
+      - cd frontend && corepack pnpm audit --audit-level high
+
+  check:tooling:
+    desc: Run repository tooling auto-fixes and checks
+    cmds:
+      - cd frontend && corepack pnpm exec knip --config src/config/knip.json
+      - python3 -m json.tool .codex/hooks.json >/dev/null
+      - bash -n .codex/hooks/post-tool-check.sh .codex/hooks/pre-commit-check.sh scripts/install_tools.sh
+      - python3 -m py_compile scripts/check_changed.py
+      - cd backend && uv run python ../scripts/check_dependabot.py
+      - cd backend && uv run python ../scripts/check_openapi.py
+      - actionlint
+      - hadolint docker/backend.Dockerfile docker/frontend.Dockerfile
+      - terraform -chdir=infra/terraform fmt
+      - terraform -chdir=infra/terraform init -backend=false
+      - terraform -chdir=infra/terraform validate
+      - tflint --chdir=infra/terraform --init
+      - tflint --chdir=infra/terraform
+
+  check:security:
+    desc: Run security checks
+    cmds:
+      - gitleaks detect --source . --redact --verbose
+      - uvx zizmor --offline .
+
+  check:changed:
+    desc: Run auto-fixes and checks selected from changed files
+    cmds:
+      - python3 scripts/check_changed.py changed
+
+  check:fast:
+    desc: Run all fast checks used by Codex hooks
+    cmds:
+      - task check:fast:backend
+      - task check:fast:frontend
+      - task check:fast:tooling
+
+  check:fast:backend:
+    desc: Run fast backend auto-fixes and checks
+    cmds:
+      - cd backend && uv run ruff format src tests
+      - cd backend && uv run ruff check --fix src tests
+      - cd backend && uv run ty check src tests
+
+  check:fast:frontend:
+    desc: Run fast frontend auto-fixes and checks
+    cmds:
+      - cd frontend && corepack pnpm exec biome check --write --config-path biome.json .
+      - cd frontend && corepack pnpm tsc --noEmit
+
+  check:fast:tooling:
+    desc: Run fast repository tooling checks
+    cmds:
+      - python3 -m json.tool .codex/hooks.json >/dev/null
+      - bash -n .codex/hooks/post-tool-check.sh .codex/hooks/pre-commit-check.sh scripts/install_tools.sh
+      - python3 -m py_compile scripts/check_changed.py
+      - actionlint
+      - terraform -chdir=infra/terraform fmt
+
+  test:
+    desc: Run all tests
+    cmds:
+      - task test:backend
+      - task test:frontend
+
+  test:backend:
+    desc: Run backend tests
+    cmds:
+      - cd backend && uv run pytest
+
+  test:frontend:
+    desc: Run frontend unit and E2E tests
+    cmds:
+      - cd frontend && corepack pnpm vitest run --config src/config/vite.config.ts --coverage
+      - cd frontend && corepack pnpm playwright test --config src/config/playwright.config.ts
+
+  sync:dto:
+    desc: Export OpenAPI and regenerate frontend API types
+    cmds:
+      - cd backend && uv run python ../scripts/export_openapi.py
+      - cd frontend && corepack pnpm run generate:api
+
+  deploy:
+    desc: Show deploy placeholder
+    cmds:
+      - echo "deploy task は未設定です。環境ごとのコマンドはレビュー後に追加してください。"

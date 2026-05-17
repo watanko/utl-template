@@ -40,7 +40,7 @@ def main() -> None:
     expected = build_openapi_text()
     actual = OPENAPI_PATH.read_text(encoding="utf-8")
     if actual != expected:
-        raise SystemExit("docs/openapi.json is stale. Run `make sync dto`.")
+        raise SystemExit("docs/openapi.json is stale. Run `task sync:dto`.")
 
 
 if __name__ == "__main__":

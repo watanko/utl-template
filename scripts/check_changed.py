@@ -261,18 +261,18 @@ def command_for_label(label: str, profile: CheckProfile) -> CheckCommand:
 
     if profile == "fast":
         commands = {
-            "backend": CheckCommand("make check-fast backend", ("make", "check-fast", "backend")),
-            "frontend": CheckCommand("make check-fast frontend", ("make", "check-fast", "frontend")),
-            "tooling": CheckCommand("make check-fast tooling", ("make", "check-fast", "tooling")),
-            "security": CheckCommand("make check security", ("make", "check", "security")),
+            "backend": CheckCommand("task check:fast:backend", ("task", "check:fast:backend")),
+            "frontend": CheckCommand("task check:fast:frontend", ("task", "check:fast:frontend")),
+            "tooling": CheckCommand("task check:fast:tooling", ("task", "check:fast:tooling")),
+            "security": CheckCommand("task check:security", ("task", "check:security")),
         }
         return commands[label]
 
     commands = {
-        "backend": CheckCommand("make check backend", ("make", "check", "backend")),
-        "frontend": CheckCommand("make check frontend", ("make", "check", "frontend")),
-        "tooling": CheckCommand("make check tooling", ("make", "check", "tooling")),
-        "security": CheckCommand("make check security", ("make", "check", "security")),
+        "backend": CheckCommand("task check:backend", ("task", "check:backend")),
+        "frontend": CheckCommand("task check:frontend", ("task", "check:frontend")),
+        "tooling": CheckCommand("task check:tooling", ("task", "check:tooling")),
+        "security": CheckCommand("task check:security", ("task", "check:security")),
     }
     return commands[label]
 
@@ -304,7 +304,7 @@ def select_commands(paths: set[str], profile: CheckProfile) -> list[CheckCommand
         if path.startswith("frontend/"):
             add("frontend")
         if (
-            path == "Makefile"
+            path == "Taskfile.yml"
             or path == "pre-commit.yaml"
             or path.startswith(".codex/")
             or path.startswith(".github/")

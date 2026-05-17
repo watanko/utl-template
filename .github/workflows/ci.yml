@@ -24,6 +24,17 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+        with:
+          go-version: stable
+
+      - name: Install Task
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          GOBIN="$HOME/.local/bin" go install github.com/go-task/task/v3/cmd/task@latest
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
       - name: Setup uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
@@ -35,10 +46,10 @@ jobs:
         run: uv sync --frozen --all-extras --dev
 
       - name: Check backend
-        run: make check backend
+        run: task check:backend
 
       - name: Test backend
-        run: make test backend
+        run: task test:backend
 
   frontend:
     name: frontend
@@ -56,6 +67,17 @@ jobs:
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
 
+      - name: Setup Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+        with:
+          go-version: stable
+
+      - name: Install Task
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          GOBIN="$HOME/.local/bin" go install github.com/go-task/task/v3/cmd/task@latest
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
       - name: Enable Corepack
         run: corepack enable
 
@@ -68,10 +90,10 @@ jobs:
         run: corepack pnpm exec playwright install --with-deps chromium
 
       - name: Check frontend
-        run: make check frontend
+        run: task check:frontend
 
       - name: Test frontend
-        run: make test frontend
+        run: task test:frontend
 
   tooling:
     name: tooling
@@ -93,6 +115,12 @@ jobs:
         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version: stable
+
+      - name: Install Task
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          GOBIN="$HOME/.local/bin" go install github.com/go-task/task/v3/cmd/task@latest
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Enable Corepack
         run: corepack enable
@@ -122,7 +150,7 @@ jobs:
           sudo mv hadolint /usr/local/bin/hadolint
 
       - name: Check TypeScript tooling
-        run: make check tooling
+        run: task check:tooling
 
   security:
     name: security

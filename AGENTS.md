@@ -24,13 +24,13 @@
 ## 3. ツール
 
 - pre-commit でテスト・lint・format を自動化します。
-- よく使う操作は Makefile target に集約します。
-  - `make dev`
-  - `make test backend`
-  - `make test frontend`
-  - `make check backend`
-  - `make check frontend`
-  - `make deploy`
+- よく使う操作は Taskfile の task に集約します。
+  - `task dev`
+  - `task test:backend`
+  - `task test:frontend`
+  - `task check:backend`
+  - `task check:frontend`
+  - `task deploy`
 
 ## 4. バックエンド
 

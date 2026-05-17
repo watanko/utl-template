@@ -28,7 +28,7 @@ docker compose -f docker/compose.yaml down --remove-orphans
 
 ## deploy
 
-`make deploy` は未設定です。cloud への deploy は、対象環境、権限、secret 管理、課金影響を確認してから実装します。
+`task deploy` は未設定です。cloud への deploy は、対象環境、権限、secret 管理、課金影響を確認してから実装します。
 
 ## secret 管理
 

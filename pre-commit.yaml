@@ -15,22 +15,22 @@ repos:
     hooks:
       - id: backend-check
         name: backend-check
-        entry: make check backend
+        entry: task check:backend
         language: system
         pass_filenames: false
       - id: backend-test
         name: backend-test
-        entry: make test backend
+        entry: task test:backend
         language: system
         pass_filenames: false
       - id: frontend-check
         name: frontend-check
-        entry: make check frontend
+        entry: task check:frontend
         language: system
         pass_filenames: false
       - id: tooling-check
         name: tooling-check
-        entry: make check tooling
+        entry: task check:tooling
         language: system
         pass_filenames: false
       - id: dependabot-check
@@ -41,6 +41,6 @@ repos:
         files: ^(\.github/dependabot\.yml|scripts/check_dependabot\.py)$
       - id: frontend-test
         name: frontend-test
-        entry: make test frontend
+        entry: task test:frontend
         language: system
         pass_filenames: false
